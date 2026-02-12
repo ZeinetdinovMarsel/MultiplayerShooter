@@ -15,7 +15,7 @@ public class WeaponVFX : MonoBehaviour
         {
             _shooter.OnShoot.AddListener(PlayMuzzleFlash);
             _shooter.OnHit.AddListener(PlayHit);
-            _shooter.OnTrailSend.AddListener(PlayTrailEffect);
+            _shooter.OnTrail.AddListener(PlayTrailEffect);
         }
     }
 
@@ -25,7 +25,7 @@ public class WeaponVFX : MonoBehaviour
         {
             _shooter.OnShoot.RemoveListener(PlayMuzzleFlash);
             _shooter.OnHit.RemoveListener(PlayHit);
-            _shooter.OnTrailSend.RemoveListener(PlayTrailEffect);
+            _shooter.OnTrail.RemoveListener(PlayTrailEffect);
         }
     }
     private void PlayHit(Vector3 point, Vector3 normal)
@@ -56,7 +56,7 @@ public class WeaponVFX : MonoBehaviour
 
             var trail = Instantiate(_trailPrefab, firePoint, Quaternion.LookRotation(toEnd.normalized));
 
-            Tween.Position(trail.transform,startValue:firePoint ,endValue: hitPoint, duration: toEnd.magnitude / 600f).OnComplete(() => Destroy(trail.gameObject));
+            Tween.Position(trail.transform,startValue:firePoint ,endValue: hitPoint, duration: toEnd.magnitude / 200f).OnComplete(() => Destroy(trail.gameObject));
         }
     }
 }

@@ -275,6 +275,7 @@ GameObject:
   - component: {fileID: 4086254254708730417}
   - component: {fileID: 1790528357837172458}
   - component: {fileID: 819177280168842242}
+  - component: {fileID: 1020491436631347650}
   m_Layer: 0
   m_Name: PlayerPrefab
   m_TagString: Untagged
@@ -434,9 +435,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c58486e3bb064148b8fe0d87d976768, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mainCam: {fileID: 4511640578065581292}
-  _cinemachineCam: {fileID: 8414110928878188465}
-  _inputManager: {fileID: 841073201414974076}
+  _localPlayerItems: {fileID: 1020491436631347650}
 --- !u!114 &6215267020698425017
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -483,7 +482,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _maxHealth: 100
-  _health: 0
 --- !u!114 &6290319203906559447
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -566,6 +564,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animator: {fileID: 6234240722131571653}
   _shooter: {fileID: 6290319203906559447}
+--- !u!114 &1020491436631347650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1327080331479517506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88ff02d0b2e57d84180c5ef50b647a1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _mainCam: {fileID: 4511640578065581292}
+  _cinemachineCam: {fileID: 8414110928878188465}
+  _inputManager: {fileID: 841073201414974076}
 --- !u!1 &1737799845433817111
 GameObject:
   m_ObjectHideFlags: 0
@@ -1033,7 +1046,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6456920421731282905
 Transform:
   m_ObjectHideFlags: 0
@@ -1194,6 +1207,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4511017800080541277}
     m_Modifications:
+    - target: {fileID: 89357910687465460, guid: 536582a3a33fba74ab5756f096ff72f6, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4881763313732270042, guid: 536582a3a33fba74ab5756f096ff72f6, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8330843800064421620, guid: 536582a3a33fba74ab5756f096ff72f6, type: 3}
       propertyPath: m_Name
       value: Mark23

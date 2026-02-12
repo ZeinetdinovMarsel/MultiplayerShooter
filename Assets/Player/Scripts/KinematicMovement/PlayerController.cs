@@ -4,7 +4,7 @@ using UnityEngine;
 using Zenject;
 using static PlayerInputManager;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviourPun
 {
     [Inject] private PlayerInputManager _playerInput;
     [Inject(Id = "PlayerTransform")] private Transform _playerTransform;
@@ -54,19 +54,15 @@ public class PlayerController : MonoBehaviour
     private RaycastHit _groundRayHit;
     public RaycastHit GroundRayHit => _groundRayHit;
 
-    private PhotonView _photonView;
-    private void Awake()
-    {
-        _photonView = GetComponent<PhotonView>();
-        _rb = GetComponent<Rigidbody>();
-        _playerCollider = GetComponent<Collider>();
-    }
     private void Start()
     {
-        if (!_photonView.IsMine)
+        if (!photonView.IsMine)
         {
+            enabled = false;
             return;
         }
+        _rb = GetComponent<Rigidbody>();
+        _playerCollider = GetComponent<Collider>();
         GetComponent<LocalPlayerBehaviour>().IsLocalPlayer();
         _movementController.Init(this, _playerTransform, _rb);
         _jumpController.Init(this, _playerTransform, _rb);
@@ -84,7 +80,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!_photonView.IsMine)
+        if (!photonView.IsMine)
         {
             return;
         }

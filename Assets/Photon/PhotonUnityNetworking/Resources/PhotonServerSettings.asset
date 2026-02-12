@@ -46,6 +46,9 @@ MonoBehaviour:
   - RPC_PlayShootAnimation
   - RPC_PlayHitEffect
   - RPC_SpawnBulletTrail
+  - RPC_PlayShotEffects
+  - RPC_RequestRespawn
+  - RPC_SetActive
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
