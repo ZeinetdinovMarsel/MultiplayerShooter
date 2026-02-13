@@ -9,5 +9,6 @@ public class LocalPlayerBehaviour : MonoBehaviour
     public void IsLocalPlayer()
     {
         _localPlayerItems.RespawnSetup();
+        _localPlayerItems.gameObject.SetActive(true);
     }
 }

@@ -7,13 +7,14 @@ public class WeaponVFX : MonoBehaviour
     [SerializeField] private ParticleSystem _muzzleFlash;
     [SerializeField] private ParticleSystem _hitPrefab;
     [SerializeField] private NetworkShooter _shooter;
+    [SerializeField] private PistolBehaviour _pistol;
     [SerializeField] private TrailRenderer _trailPrefab;
 
     private void OnEnable()
     {
         if (_shooter != null)
         {
-            _shooter.OnShoot.AddListener(PlayMuzzleFlash);
+            _pistol.OnShoot.AddListener(PlayMuzzleFlash);
             _shooter.OnHit.AddListener(PlayHit);
             _shooter.OnTrail.AddListener(PlayTrailEffect);
         }
@@ -23,7 +24,7 @@ public class WeaponVFX : MonoBehaviour
     {
         if (_shooter != null)
         {
-            _shooter.OnShoot.RemoveListener(PlayMuzzleFlash);
+            _pistol.OnShoot.RemoveListener(PlayMuzzleFlash);
             _shooter.OnHit.RemoveListener(PlayHit);
             _shooter.OnTrail.RemoveListener(PlayTrailEffect);
         }
@@ -36,8 +37,6 @@ public class WeaponVFX : MonoBehaviour
 
             var hitEffect = Instantiate(_hitPrefab, point, rotation);
             hitEffect.Play();
-
-            Destroy(hitEffect.gameObject, 1f);
         }
     }
 

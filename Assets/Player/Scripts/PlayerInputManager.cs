@@ -17,6 +17,7 @@ public class PlayerInputManager : MonoBehaviour
     public UnityEvent<PressedStateEventArgs> OnInteractEvent;
     public UnityEvent<PressedStateEventArgs> OnPauseEvent;
     public UnityEvent<PressedStateEventArgs> OnShootEvent;
+    public UnityEvent<PressedStateEventArgs> OnReloadEvent;
     public ContiniousActions ContiniousActions { get; private set; } = new();
 
     public void OnMove(InputAction.CallbackContext ctx)
@@ -60,6 +61,11 @@ public class PlayerInputManager : MonoBehaviour
     {
         PressedState state = GetPressedState(ctx);
         OnShootEvent?.Invoke(new PressedStateEventArgs(state));
+    }
+    public void OnReload(InputAction.CallbackContext ctx)
+    {
+        PressedState state = GetPressedState(ctx);
+        OnReloadEvent?.Invoke(new PressedStateEventArgs(state));
     }
 
     private PressedState GetPressedState(InputAction.CallbackContext ctx)

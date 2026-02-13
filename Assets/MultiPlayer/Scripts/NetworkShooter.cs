@@ -9,11 +9,10 @@ public class NetworkShooter : MonoBehaviourPun
 {
     [SerializeField] private Transform _firePoint;
     [SerializeField] private float _range = 100f;
-    [SerializeField] private int _damage = 25;
+    [SerializeField] private PistolBehaviour _pistolBehaviour;
 
     [Inject] private PlayerInputManager _playerInput;
 
-    public UnityEvent OnShoot { get; private set; } = new();
     public UnityEvent<Vector3, Vector3> OnHit { get; private set; } = new();
     public UnityEvent<Vector3, Vector3> OnTrail { get; private set; } = new();
 
@@ -21,12 +20,20 @@ public class NetworkShooter : MonoBehaviourPun
     {
         if (!photonView.IsMine) return;
         _playerInput.OnShootEvent.AddListener(ShootAction);
+        _playerInput.OnReloadEvent.AddListener(ReloadAction);
     }
-
     private void ShootAction(PressedStateEventArgs pressedState)
     {
-        if (pressedState.State != PressedState.Started) return;
+        if (pressedState.State != PressedState.Started
+            || !_pistolBehaviour.ReadyToShoot
+            || _pistolBehaviour.IsReloading
+            || !_pistolBehaviour.EnoughAmmo) return;
         Shoot();
+    }
+    private void ReloadAction(PressedStateEventArgs pressedState)
+    {
+        if (pressedState.State != PressedState.Started) return;
+        _pistolBehaviour.ReloadGun().Forget();
     }
 
     private void Shoot()
@@ -34,9 +41,7 @@ public class NetworkShooter : MonoBehaviourPun
         Vector3 origin = _firePoint.position;
         Vector3 direction = _firePoint.forward;
         double shootTime = PhotonNetwork.Time;
-
-        OnShoot?.Invoke();
-
+        _pistolBehaviour.Shoot().Forget();
         photonView.RPC(nameof(RPC_ProcessShot),
             RpcTarget.MasterClient,
             origin,
@@ -61,7 +66,7 @@ public class NetworkShooter : MonoBehaviourPun
 
             if (hit.collider.TryGetComponent<Health>(out var health))
             {
-                health.ApplyDamage(_damage, info.Sender.ActorNumber);
+                health.ApplyDamage(_pistolBehaviour.Damage, info.Sender.ActorNumber);
             }
         }
         else
@@ -99,7 +104,6 @@ public class NetworkShooter : MonoBehaviourPun
         double delay = Mathf.Max(0f, (float)(shotTime - PhotonNetwork.Time));
         await UniTask.WaitForSeconds((float)delay);
 
-        OnShoot?.Invoke();
         OnTrail?.Invoke(origin, hitPoint);
 
         if (hasHit)

@@ -7,14 +7,15 @@ public class LocalPlayerItems : MonoBehaviour
     [SerializeField] private Camera _mainCam;
     [SerializeField] private CinemachineCamera _cinemachineCam;
     [SerializeField] private GameObject _inputManager;
+    [SerializeField] private Canvas _playerCanvas;
 
     public void RespawnSetup()
     {
+        transform.SetParent(null);
         _mainCam.gameObject.SetActive(true);
-        _mainCam.transform.SetParent(null);
         _cinemachineCam.gameObject.SetActive(true);
-        _cinemachineCam.transform.SetParent(null);
         _inputManager.gameObject.SetActive(true);
+        _playerCanvas.gameObject.SetActive(true);
     }
 
 }
