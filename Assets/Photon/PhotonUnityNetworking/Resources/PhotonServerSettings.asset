@@ -52,6 +52,10 @@ MonoBehaviour:
   - RPC_Respawn
   - RPC_RequestRespawnFromMaster
   - RPC_UpdateMMR
+  - RPC_LoseMatch
+  - RPC_UpdateMMRAndReturn
+  - RPC_ReportLossToMaster
+  - RPC_NotifyDeath
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

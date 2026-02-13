@@ -28,10 +28,6 @@ public class RespawnUI : MonoBehaviour
         _playerHealth.OnPlayerDeath.AddListener(HandlePlayerDeath);
     }
 
-    private void OnDisable()
-    {
-        _playerHealth.OnPlayerDeath.RemoveListener(HandlePlayerDeath);
-    }
 
     private void HandlePlayerDeath(PhotonView playerView)
     {

@@ -8,21 +8,10 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        PhotonNetwork.ConnectUsingSettings();
-    }
-
-    public override void OnConnectedToMaster()
-    {
-        PhotonNetwork.JoinLobby();
-    }
-
-    public override void OnJoinedLobby()
-    {
-        PhotonNetwork.JoinOrCreateRoom(
-            "test",
-            new Photon.Realtime.RoomOptions { MaxPlayers = 8 },
-            null
-        );
+        if (PhotonNetwork.InRoom)
+        {
+            SpawnPlayer();
+        }
     }
 
     public override void OnJoinedRoom()
@@ -30,11 +19,11 @@ public class RoomManager : MonoBehaviourPunCallbacks
         SpawnPlayer();
     }
 
-    public void SpawnPlayer()
+    private void SpawnPlayer()
     {
-        Vector3 spawnPos = new Vector3(0, 1, 0);
+        Vector3 spawnPos = new Vector3(Random.Range(-2f, 2f), 1, Random.Range(-2f, 2f));
         Quaternion spawnRot = Quaternion.identity;
+
         _playerFactory.Create(spawnPos, spawnRot);
     }
-
 }

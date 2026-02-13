@@ -1,31 +1,59 @@
+using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 
-public class RankedGameManager : MonoBehaviourPun
+public class RankedGameManager : MonoBehaviourPunCallbacks
 {
-    public void EndMatch(bool localPlayerWon)
+    public void EndMatch(Player loser)
     {
-        if (!PhotonNetwork.IsMasterClient)
-            return;
+        if (!PhotonNetwork.IsMasterClient) return;
 
-        Player player1 = PhotonNetwork.PlayerList[0];
-        Player player2 = PhotonNetwork.PlayerList[1];
+        Player winner = PhotonNetwork.PlayerListOthers[0];
 
-        int mmr1 = (int)player1.CustomProperties["MMR"];
-        int mmr2 = (int)player2.CustomProperties["MMR"];
+        int mmrLoser = loser.CustomProperties.ContainsKey("MMR") ? (int)loser.CustomProperties["MMR"] : 0;
+        int mmrWinner = winner.CustomProperties.ContainsKey("MMR") ? (int)winner.CustomProperties["MMR"] : 0;
 
-        int newMMR1 = MMRSystem.Calculate(mmr1, mmr2, localPlayerWon);
-        int newMMR2 = MMRSystem.Calculate(mmr2, mmr1, !localPlayerWon);
+        int newWinnerMMR = MMRSystem.Calculate(mmrWinner, mmrLoser, true);
+        int newLoserMMR = MMRSystem.Calculate(mmrLoser, mmrWinner, false);
 
-        photonView.RPC(nameof(RPC_UpdateMMR), player1, newMMR1);
-        photonView.RPC(nameof(RPC_UpdateMMR), player2, newMMR2);
+        Hashtable winnerProps = new Hashtable { ["MMR"] = newWinnerMMR };
+        Hashtable loserProps = new Hashtable { ["MMR"] = newLoserMMR };
+
+        winner.SetCustomProperties(winnerProps);
+        loser.SetCustomProperties(loserProps);
+
+        photonView.RPC(nameof(RPC_UpdateMMRAndReturn), winner, newWinnerMMR);
+        photonView.RPC(nameof(RPC_UpdateMMRAndReturn), loser, newLoserMMR);
     }
+
 
     [PunRPC]
-    private void RPC_UpdateMMR(int newMMR)
+    private void RPC_UpdateMMRAndReturn(int newMMR)
     {
         PlayerMMR.Save(newMMR);
-        Debug.Log("New MMR: " + newMMR);
+        PhotonNetwork.LeaveRoom();
     }
+
+    public override void OnLeftRoom()
+    {
+        PhotonNetwork.LoadLevel("MainMenu");
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+
+        if (PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.PlayerCount == 1)
+        {
+            Player remaining = PhotonNetwork.LocalPlayer;
+            int mmrWinner = PlayerMMR.MMR;
+            int mmrLoser = otherPlayer.CustomProperties.ContainsKey("MMR")
+                ? (int)otherPlayer.CustomProperties["MMR"]
+                : mmrWinner;
+
+            int newWinnerMMR = MMRSystem.Calculate(mmrWinner, mmrLoser, true);
+            RPC_UpdateMMRAndReturn(newWinnerMMR);
+        }
+    }
+
 }

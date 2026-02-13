@@ -8,8 +8,14 @@ public class RankedMatchmaking : MonoBehaviourPunCallbacks
     private int _searchRange = 100;
     private const int MAX_RANGE = 500;
 
+    private void Awake()
+    {
+        PhotonNetwork.AutomaticallySyncScene = true;
+    }
+
     public void StartRankedSearch()
     {
+        _searchRange = 100;
         TryJoinRoom();
     }
 
@@ -17,15 +23,16 @@ public class RankedMatchmaking : MonoBehaviourPunCallbacks
     {
         int myMMR = PlayerMMR.MMR;
 
-        string sql = $"MMR_MIN <= {myMMR} AND MMR_MAX >= {myMMR}";
+        ExitGames.Client.Photon.Hashtable expectedProps = new ExitGames.Client.Photon.Hashtable
+        {
+            { "MMR_MIN", myMMR - _searchRange },
+            { "MMR_MAX", myMMR + _searchRange }
+        };
 
-        PhotonNetwork.JoinRandomRoom(
-            null,
-            0,
-            MatchmakingMode.FillRoom,
-            TypedLobby.Default,
-            sql
-        );
+        bool joinStarted = PhotonNetwork.JoinRandomRoom(expectedProps, 0);
+
+        if (!joinStarted)
+            CreateRoom();
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message)
@@ -37,23 +44,36 @@ public class RankedMatchmaking : MonoBehaviourPunCallbacks
     {
         int myMMR = PlayerMMR.MMR;
 
-        RoomOptions options = new RoomOptions();
-        options.MaxPlayers = 2;
-
-        Hashtable props = new Hashtable
+        RoomOptions options = new RoomOptions
         {
-            { "MMR_MIN", myMMR - _searchRange },
-            { "MMR_MAX", myMMR + _searchRange }
+            MaxPlayers = 2,
+            CustomRoomProperties = new ExitGames.Client.Photon.Hashtable
+            {
+                { "MMR_MIN", myMMR - _searchRange },
+                { "MMR_MAX", myMMR + _searchRange }
+            },
+            CustomRoomPropertiesForLobby = new string[] { "MMR_MIN", "MMR_MAX" }
         };
-
-        options.CustomRoomProperties = props;
-        options.CustomRoomPropertiesForLobby = new string[] { "MMR_MIN", "MMR_MAX" };
 
         PhotonNetwork.CreateRoom(null, options, TypedLobby.Default);
     }
 
     public override void OnJoinedRoom()
     {
-        Debug.Log("Joined Ranked Room");
+        Debug.Log("Присоединился в комнату рейтинга");
+
+        if (PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.PlayerCount == 2)
+        {
+            PhotonNetwork.LoadLevel("GameScene");
+        }
+    }
+
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        Debug.Log($"{newPlayer.NickName} присоединился");
+        if (PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.PlayerCount == 2)
+        {
+            PhotonNetwork.LoadLevel("GameScene");
+        }
     }
 }

@@ -30,6 +30,8 @@ MonoBehaviour:
       Value: 1
     - Key: Room
       Value: 1
+    - Key: MainMenu
+      Value: 1
   validatorTypesMap:
     list:
     - Key: Artifice_ValidatorModule_ScriptableObject_NullReferenceChecker

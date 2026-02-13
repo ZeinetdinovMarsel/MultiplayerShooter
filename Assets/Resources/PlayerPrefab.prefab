@@ -730,6 +730,7 @@ GameObject:
   - component: {fileID: 1790528357837172458}
   - component: {fileID: 819177280168842242}
   - component: {fileID: 3895990456699622718}
+  - component: {fileID: 4920949428876491140}
   m_Layer: 0
   m_Name: PlayerPrefab
   m_TagString: Untagged
@@ -1035,6 +1036,19 @@ MonoBehaviour:
   _verticalRecoilAmount: 0.2
   _recoilDuration: 0.1
   _pistol: {fileID: 880476332896597972}
+--- !u!114 &4920949428876491140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1327080331479517506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 571be6457955aa8479fc57b1f56066c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _health: {fileID: 8190637869721130763}
 --- !u!1 &1628463937999656098
 GameObject:
   m_ObjectHideFlags: 0
