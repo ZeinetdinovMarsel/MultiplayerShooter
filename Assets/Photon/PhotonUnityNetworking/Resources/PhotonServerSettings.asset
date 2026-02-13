@@ -51,6 +51,7 @@ MonoBehaviour:
   - RPC_SetActive
   - RPC_Respawn
   - RPC_RequestRespawnFromMaster
+  - RPC_UpdateMMR
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
