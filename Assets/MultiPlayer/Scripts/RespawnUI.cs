@@ -2,23 +2,30 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using Zenject;
+using UnityEngine.SceneManagement;
 
 public class RespawnUI : MonoBehaviour
 {
     [SerializeField] private GameObject _panel;
     [SerializeField] private Button _respawnButton;
+    [SerializeField] private Button _menuButton;
     [Inject] private Health _playerHealth;
     private PhotonView _localPlayerView;
 
-    private void Awake()
+    private void Start()
     {
-        _panel.SetActive(false);
         _respawnButton.onClick.AddListener(OnRespawnClicked);
+        _menuButton.onClick.AddListener(() =>
+        {
+           SceneManager.LoadScene("MainMenu");
+        });
+       
     }
 
-    private void OnEnable()
+    [Inject]
+    private void Construct()
     {
-        _playerHealth.OnPlayerDeath.AddListener( HandlePlayerDeath);
+        _playerHealth.OnPlayerDeath.AddListener(HandlePlayerDeath);
     }
 
     private void OnDisable()
@@ -38,7 +45,21 @@ public class RespawnUI : MonoBehaviour
     private void OnRespawnClicked()
     {
         if (_localPlayerView == null) return;
-        _localPlayerView.RPC(nameof(RoomManager.RPC_RequestRespawn), RpcTarget.MasterClient);
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+
+            Vector3 spawnPos = new Vector3(0, 1, 0);
+            Quaternion spawnRot = Quaternion.identity;
+            _localPlayerView.RPC("RPC_Respawn", _localPlayerView.Owner, spawnPos, spawnRot);
+        }
+        else
+        {
+            _localPlayerView.RPC("RPC_RequestRespawnFromMaster", RpcTarget.MasterClient, _localPlayerView.ViewID);
+        }
+
         _panel.SetActive(false);
     }
+
+
 }

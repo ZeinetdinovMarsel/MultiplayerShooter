@@ -12,21 +12,24 @@ public class WeaponRecoil : MonoBehaviour
     [Inject(Id = "PlayerFPCamera")] private CinemachineCamera _playerCamera;
     private CinemachinePanTilt _cinemachinePanTilt;
 
-    private void Start()
+    [Inject]
+    private void Construct()
     {
         _cinemachinePanTilt = _playerCamera.GetComponent<CinemachinePanTilt>();
         _pistol.OnShoot.AddListener(AddRecoil);
     }
     private void AddRecoil()
     {
-        float startPan = _cinemachinePanTilt.PanAxis.Value;
-        float endPan = startPan + _horizontalRecoilAmount * Random.Range(-1f, 1f);
-
-        float startTilt = _cinemachinePanTilt.TiltAxis.Value;
-        float endTilt = startTilt - _verticalRecoilAmount * Random.Range(0f, 1f);
+        float panDelta = _horizontalRecoilAmount * Random.Range(-1f, 1f);
+        float tiltDelta = _verticalRecoilAmount * Random.Range(0f, 1f);
 
         Sequence.Create()
-            .Group(Tween.Custom(startPan, endPan, _recoilDuration, (value) => { _cinemachinePanTilt.PanAxis.Value = value; }, Ease.OutBounce))
-            .Group(Tween.Custom(startTilt, endTilt, _recoilDuration, (value) => { _cinemachinePanTilt.TiltAxis.Value = value; }, Ease.OutBounce));
+            .Group(Tween.Custom(0f, panDelta, _recoilDuration, (value) => {
+                _cinemachinePanTilt.PanAxis.Value += value;
+            }, Ease.OutBounce))
+            .Group(Tween.Custom(0f, tiltDelta, _recoilDuration, (value) => {
+                _cinemachinePanTilt.TiltAxis.Value -= value;
+            }, Ease.OutBounce));
     }
+
 }

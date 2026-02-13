@@ -4,8 +4,6 @@ using Zenject;
 
 public class RoomManager : MonoBehaviourPunCallbacks
 {
-    [SerializeField] private Transform _spawnPoint;
-
     [Inject] private IFactory<Vector3, Quaternion, GameObject> _playerFactory;
 
     private void Start()
@@ -34,21 +32,9 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     public void SpawnPlayer()
     {
-        _playerFactory.Create(_spawnPoint.position, _spawnPoint.rotation);
-    }
-
-    [PunRPC]
-    public void RPC_RequestRespawn(PhotonMessageInfo info)
-    {
-        GameObject playerObj = info.Sender.TagObject as GameObject;
-        if (playerObj != null)
-        {
-            var health = playerObj.GetComponent<Health>();
-            if (health != null)
-            {
-                health.Respawn(_spawnPoint.position, _spawnPoint.rotation);
-            }
-        }
+        Vector3 spawnPos = new Vector3(0, 1, 0);
+        Quaternion spawnRot = Quaternion.identity;
+        _playerFactory.Create(spawnPos, spawnRot);
     }
 
 }

@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public class Health : MonoBehaviourPun
 {
     [SerializeField] private int _maxHealth = 100;
-    private int _health;
+    [SerializeField] private int _health;
 
     public UnityEvent<PhotonView> OnPlayerDeath { get; private set; } = new();
     public UnityEvent<PhotonView> OnPlayerRespawn { get; private set; } = new();
@@ -22,16 +22,20 @@ public class Health : MonoBehaviourPun
         if (_health <= 0)
         {
             _health = 0;
-            OnPlayerDeath?.Invoke(photonView);
-
+            if (photonView.IsMine)
+            {
+                OnPlayerDeath?.Invoke(photonView);
+            }
             photonView.RPC(nameof(RPC_SetActive), RpcTarget.All, false);
         }
+
 
         photonView.RPC(nameof(RPC_SyncHealth), RpcTarget.All, _health);
 
     }
 
-    public void Respawn(Vector3 position, Quaternion rotation)
+    [PunRPC]
+    public void RPC_Respawn(Vector3 position, Quaternion rotation)
     {
         _health = _maxHealth;
         transform.position = position;
@@ -45,9 +49,27 @@ public class Health : MonoBehaviourPun
     }
 
     [PunRPC]
+    public void RPC_RequestRespawnFromMaster(int viewID, PhotonMessageInfo info)
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
+
+        PhotonView playerView = PhotonView.Find(viewID);
+        if (playerView != null)
+        {
+            Vector3 spawnPos = new Vector3(0, 1, 0);
+            Quaternion spawnRot = Quaternion.identity;
+            playerView.RPC("RPC_Respawn", playerView.Owner, spawnPos, spawnRot);
+        }
+    }
+
+    [PunRPC]
     void RPC_SyncHealth(int hp)
     {
         _health = hp;
+        if (_health <= 0 && photonView.IsMine)
+        {
+            OnPlayerDeath?.Invoke(photonView);
+        }
     }
 
     [PunRPC]
@@ -55,4 +77,5 @@ public class Health : MonoBehaviourPun
     {
         gameObject.SetActive(value);
     }
+
 }
