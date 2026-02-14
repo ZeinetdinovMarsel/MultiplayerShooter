@@ -44,4 +44,11 @@ public class MainMenuManager : MonoBehaviourPunCallbacks
 
         _rankedMatchmaking.StartRankedSearch();
     }
+
+	public override void OnConnectedToMaster()
+	{
+		base.OnConnectedToMaster();
+		Hashtable hash = new Hashtable { { "MMR", PlayerMMR.MMR } };
+		PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+	}
 }
