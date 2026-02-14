@@ -56,6 +56,7 @@ MonoBehaviour:
   - RPC_UpdateMMRAndReturn
   - RPC_ReportLossToMaster
   - RPC_NotifyDeath
+  - ShowImageRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
